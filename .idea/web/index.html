@@ -1,0 +1,176 @@
+<html>
+<meta charSet="utf-8"/>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <!--    <script src="https://cdn.bootcdn.net/ajax/libs/require.js/2.3.6/require.js"></script>-->
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.js"></script>
+    <style>
+        /* pages/user/user.wxss */
+        .table {
+            border: 0px solid darkgray;
+        }
+
+        .tr {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            height: 3rem;
+            align-items: center;
+        }
+
+        .td {
+            width: 30%;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #edit {
+            width: 160px;
+        }
+
+        .bg-w {
+            background: snow;
+        }
+
+        .bg-g {
+            background: #E6F3F9;
+        }
+
+        .th {
+            width: 40%;
+            justify-content: center;
+            background: #3366FF;
+            color: #fff;
+            display: flex;
+            height: 3rem;
+            align-items: center;
+        }
+
+
+    </style>
+</head>
+
+<body>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<div id="app">
+    {{message}}
+</div>
+<div id="app_3">
+
+    <p v-if="seen">{{seen_number}}</p>
+    <p v-else="seen">{{seen_number+1}}</p>
+</div>
+
+<div id="app_userList">
+    <div class="table">
+        <div class="tr bg-w">
+            <div class="th">id</div>
+            <div class="th">name</div>
+            <div class="th ">age</div>
+            <div class="th ">email</div>
+            <div class="th ">edit</div>
+        </div>
+        <!--
+          遍历json数据 二维 表格化
+        -->
+        <!--     userList: [
+                        {
+                        id: 1,
+                        name: "李四",
+                        age: 11,
+                        email: "b@qq.com"
+                    },-->
+        <block v-for="user in userList">
+            <div class="tr bg-g" v-if="user.id % 2 == 0">
+                <div class="td">{{user.id}}</div>
+                <div class="td">{{user.name}}</div>
+                <div class="td">{{user.age}}</div>
+                <div class="td">{{user.email}}</div>
+                <div class="td" id="edit">修改|编辑</div>
+            </div>
+            <div class="tr" v-else>
+                <div class="td">{{user.id}}</div>
+                <div class="td">{{user.name}}</div>
+                <div class="td">{{user.age}}</div>
+                <div class="td">{{user.email}}</div>
+                <div class="td" id="edit">修改|编辑</div>
+            </div>
+        </block>
+    </div>
+    <button bindtap="addUser" type="primary" @click="getUserList">获取信息</button>
+</div>
+<button bindtap="addUser" type="primary">增加用户</button>
+<button bindtap="deleteUser" type="primary">删除用户
+</button>
+<div id="result"></div>
+<script>
+    var app_3 = new Vue({
+        el: '#app_3',
+        data: {
+            seen: false,
+            seen_number: 0,
+        }
+    })
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'hello Vue!',
+        }
+    })
+
+    // var datas= require('http://image.dxoca.cn/user.json');
+    var app_user_list = new Vue({
+            el: '#app_userList',
+            /*前端接受数据的初始化需要为 Array 类型，而不是 [ ]*/
+            data: {
+                userList: {}
+                //userList
+                // userList: [
+                //     {
+                //         id: 1,
+                //         name: "李四",
+                //         age: 11,
+                //         email: "b@qq.com"
+                //     },
+                //     {
+                //         id: 2,
+                //         name: "王麻子",
+                //         age: 16,
+                //         email: "c@qq.com"
+                //     },
+                //     {
+                //         id: 3,
+                //         name: "二胡",
+                //         age: 13,
+                //         email: "d@qq.com"
+                //     },
+                //     {
+                //         id: 4,
+                //         name: "六百",
+                //         age: 18,
+                //         email: "e@qq.com"
+                //     }
+                // ]
+            },
+            methods: {
+                /*绑定到获取信息按钮 目前存在跨域bug   */
+                getUserList: function () {
+                    var that = this;
+                    axios.get("http://localhost:8081/user").then(function (response) {
+                        console.log(response.data);
+                        that.userList = response.data;
+                    }, function (err) {
+                        console.log(err);
+                    })
+                }
+            }
+        }
+    )
+</script>
+
+
+</body>
+</html>
+
